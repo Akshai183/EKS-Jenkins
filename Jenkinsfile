@@ -6,6 +6,7 @@ pipeline {
    stages {
       stage('Check The Kubernetes Access') {
          steps {
+            sh 'su jenkins'
             sh 'aws eks --region us-east-2 update-kubeconfig --name eks-cluster-01'
             sh 'kubectl get pods -A'
             sh 'kubectl get ns'
@@ -13,7 +14,8 @@ pipeline {
       }
       stage('Deploy Voting App') {
          steps {
-            sh 'ls -al'
+            sh 'su jenkins'
+            sh 'ls'
             sh 'kubectl apply -f voting-with-ingress.yml'
             sh 'kubectl apply -f ingress.yml'
             sh 'kubectl apply -f ingress-nk.yml'
@@ -22,12 +24,14 @@ pipeline {
       }
       stage('Deploy Ingress for Vote & Result') {
          steps {
+            sh 'su jenkins'
             sh 'kubectl apply -f ingress.yml'
             sh 'kubectl get ingress'
          }
       }
       stage('Validating Deployment') {
          steps {
+            sh 'su jenkins'
             sh 'kubectl get pods,deployment,svc'
          }
       }
