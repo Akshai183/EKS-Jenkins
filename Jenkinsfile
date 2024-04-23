@@ -2,36 +2,35 @@ pipeline {
    agent any
    environment {
       PROJECT = 'WELCOME TO K8S B23 BATCH - Jenkins Class'
+      JENKINS_USERNAME = 'jenkins'
+      JENKINS_PASSWORD = 'admin'
    }
    stages {
       stage('Check The Kubernetes Access') {
          steps {
-            su jenkins -c 'aws eks --region us-east-2 update-kubeconfig --name eks-cluster-01'
-            sh 'kubectl get pods -A'
-            sh 'kubectl get ns'
+                sh "su $JENKINS_USERNAME -c 'kubectl get pods -A'"
+                sh "su $JENKINS_USERNAME -c 'kubectl get ns'"
          }
       }
       stage('Deploy Voting App') {
          steps {
-            
-            sh 'ls'
-            sh 'kubectl apply -f voting-with-ingress.yml'
-            sh 'kubectl apply -f ingress.yml'
-            sh 'kubectl apply -f ingress-nk.yml'
-            sh 'kubectl get pods,svc,ingress'
+            sh "su $JENKINS_USERNAME -c  'kubectl apply -f voting-with-ingress.yml'"
+            sh "su $JENKINS_USERNAME -c  'kubectl apply -f ingress.yml'"
+            sh "su $JENKINS_USERNAME -c  'kubectl apply -f ingress-nk.yml'"
+            sh "su $JENKINS_USERNAME -c  'kubectl get pods,svc,ingress'"
          }
       }
       stage('Deploy Ingress for Vote & Result') {
          steps {
             
-            sh 'kubectl apply -f ingress.yml'
-            sh 'kubectl get ingress'
+            sh "su $JENKINS_USERNAME -c  'kubectl apply -f ingress.yml'"
+            sh "su $JENKINS_USERNAME -c  'kubectl get ingress'"
          }
       }
       stage('Validating Deployment') {
          steps {
             
-            sh 'kubectl get pods,deployment,svc'
+            sh "su $JENKINS_USERNAME -c 'kubectl get pods,deployment,svc'"
          }
       }
    }
